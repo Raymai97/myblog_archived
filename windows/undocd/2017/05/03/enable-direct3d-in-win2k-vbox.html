@@ -102,7 +102,7 @@
 <h2 id="part-2-mod-the-files-to-load-kernel31dll-instead">Part 2: Mod the files to load kernel31.dll instead</h2>
 
 <blockquote>
-  <p>Win2K doesn’t support new APIs introduced in WinXP. In this case, all of these APIs are in kernel32.dll. We need a DLL, say, kernel31.dll, which will forward most of the calls to the real kernel32.dll. For “new” APIs, we will provide implementation by ourselves. Creating such DLL requires some programming knowledge. If you know how to create DLL that exports function, then you may refer Part X. Otherwise, you might just want to <a href="myblog/assets/posts/enable-direct3d-in-win2k-vbox/Kernel31.7z">download the kernel31.dll here</a>.</p>
+  <p>Win2K doesn’t support new APIs introduced in WinXP. In this case, all of these APIs are in kernel32.dll. We need a DLL, say, kernel31.dll, which will forward most of the calls to the real kernel32.dll. For “new” APIs, we will provide implementation by ourselves. Creating such DLL requires some programming knowledge. If you know how to create DLL that exports function, then you may refer Part X. Otherwise, you might just want to <a href="/myblog/assets/posts/enable-direct3d-in-win2k-vbox/Kernel31.7z">download the kernel31.dll here</a>.</p>
 </blockquote>
 
 <p>To do this, you need a hex editor. I recommended <a href="https://mh-nexus.de/en/hxd/">HxD</a> as it is free, small and serves the purpose well.</p>
@@ -128,13 +128,13 @@
 Be careful. Sometimes there are more than one occurence in a file.
     <ul>
       <li>This is the <code class="highlighter-rouge">kernel32.dll</code> we are looking for:
-  <img src="myblog/assets/posts/enable-direct3d-in-win2k-vbox/true-kernel32-string.png" alt="img" /></li>
+  <img src="/myblog/assets/posts/enable-direct3d-in-win2k-vbox/true-kernel32-string.png" alt="img" /></li>
       <li>This is <strong>NOT</strong> the one we are looking for:<br />
-  <img src="myblog/assets/posts/enable-direct3d-in-win2k-vbox/false-kernel32-string.png" alt="img" /></li>
+  <img src="/myblog/assets/posts/enable-direct3d-in-win2k-vbox/false-kernel32-string.png" alt="img" /></li>
     </ul>
   </li>
   <li>Overwrite so it become <code class="highlighter-rouge">kernel31.dll</code> and save the file.<br />
-<img src="myblog/assets/posts/enable-direct3d-in-win2k-vbox/overwrite-like-this.png" alt="img" /></li>
+<img src="/myblog/assets/posts/enable-direct3d-in-win2k-vbox/overwrite-like-this.png" alt="img" /></li>
 </ol>
 
 <h2 id="part-3-showtime">Part 3: Showtime</h2>
@@ -168,7 +168,7 @@ Overwrite the file if prompted.
       <li>VBoxOGLpackspu.dll</li>
       <li>VBoxOGLpassthroughspu.dll</li>
       <li>wined3d.dll</li>
-      <li><a href="(myblog/assets/posts/enable-direct3d-in-win2k-vbox/Kernel31.7z)">Kernel31.dll</a></li>
+      <li><a href="(/myblog/assets/posts/enable-direct3d-in-win2k-vbox/Kernel31.7z)">Kernel31.dll</a></li>
     </ul>
   </li>
 </ol>
@@ -176,7 +176,7 @@ Overwrite the file if prompted.
 <p>4) Finally, run <code class="highlighter-rouge">dxdiag</code> to see if the Direct3D acceleration is working.<br />
 It is expected to fail in Direct3D 7, but succeed in Direct3D 8 and 9 test.<br />
 Here is a screenshot running Touhou games in Win2k VBox guest:<br />
-<img src="myblog/assets/posts/enable-direct3d-in-win2k-vbox/proof-running-touhou-rss.png" alt="img" /></p>
+<img src="/myblog/assets/posts/enable-direct3d-in-win2k-vbox/proof-running-touhou-rss.png" alt="img" /></p>
 
 <h2 id="part-x-creating-the-kernel31dll">Part X: Creating the Kernel31.dll</h2>
 
@@ -201,8 +201,8 @@ Here is a screenshot running Touhou games in Win2k VBox guest:<br />
   <li>Make sure you use .def file, or the exported symbol will be decorated and your DLL wouldn’t work.</li>
 </ul>
 
-<p><img src="myblog/assets/posts/enable-direct3d-in-win2k-vbox/bad-example.png" alt="img" />
-<img src="myblog/assets/posts/enable-direct3d-in-win2k-vbox/good-example.png" alt="img" /></p>
+<p><img src="/myblog/assets/posts/enable-direct3d-in-win2k-vbox/bad-example.png" alt="img" />
+<img src="/myblog/assets/posts/enable-direct3d-in-win2k-vbox/good-example.png" alt="img" /></p>
 
   </div>
 

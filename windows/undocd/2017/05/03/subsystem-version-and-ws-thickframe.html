@@ -83,11 +83,11 @@
 
 <p>Since Visual Studio 2012, the WinForm designer uses thick window frame even if the form border style is <code class="highlighter-rouge">FixedSingle</code>.</p>
 
-<p><img src="myblog/assets/posts/subsystem-version-and-ws-thickframe/vs2015-designer-fixedsingle.png" alt="img" /></p>
+<p><img src="/myblog/assets/posts/subsystem-version-and-ws-thickframe/vs2015-designer-fixedsingle.png" alt="img" /></p>
 
 <p>This is how thing was looked like back in the older version of Visual Studio.</p>
 
-<p><img src="myblog/assets/posts/subsystem-version-and-ws-thickframe/vs2008-designer-fixedsingle.png" alt="img" /></p>
+<p><img src="/myblog/assets/posts/subsystem-version-and-ws-thickframe/vs2008-designer-fixedsingle.png" alt="img" /></p>
 
 <p>Do you ever wonder why? Here’s the answer:</p>
 
@@ -107,7 +107,7 @@
 
 <p>This explains that why sometimes you don’t even have a chance to run a certain program, if your OS version is quite old.</p>
 
-<p><img src="myblog/assets/posts/subsystem-version-and-ws-thickframe/win2k-cant-run-sdelete.png" alt="img" /></p>
+<p><img src="/myblog/assets/posts/subsystem-version-and-ws-thickframe/win2k-cant-run-sdelete.png" alt="img" /></p>
 
 <h3 id="and-ws_thickframe-would-be">And WS_THICKFRAME would be…?</h3>
 
@@ -192,7 +192,7 @@
 </code></pre>
 </div>
 
-<video width="100%" controls=""><source src="myblog/assets/posts/subsystem-version-and-ws-thickframe/test.mp4" type="video/mp4" /></video>
+<video width="100%" controls=""><source src="/myblog/assets/posts/subsystem-version-and-ws-thickframe/test.mp4" type="video/mp4" /></video>
 
 <p>It turned out if I compiled with MSVC98 or TDM-GCC, the result would be same with MSVC2005. If I compiled with MSVC2012, the behavior would be same with MSVC2015. My adventurous heart unfortunately awaken at that time, so I compiled the code <em>using MSVC2015 compiler, with MSVC2005 CRT library, and Windows SDK bundled with MSVC98.</em> Because I was also thinking,</p>
 
@@ -208,7 +208,7 @@
 
 <p>I ran out of idea. Fine, I changed my mind, I wanted to run the EXE in my Windows XP guest and see what would happen. <strong>I used the <code class="highlighter-rouge">editbin</code> to modify the subsystem version number.</strong> (For the record, I never install Windows XP targeting toolset because I don’t want to.)</p>
 
-<p><img src="myblog/assets/posts/subsystem-version-and-ws-thickframe/seemed-innocent.png" alt="img" /></p>
+<p><img src="/myblog/assets/posts/subsystem-version-and-ws-thickframe/seemed-innocent.png" alt="img" /></p>
 
 <p>I ran the program and toggled again. The result was shocking: <strong>the window size changed.</strong></p>
 
@@ -218,7 +218,7 @@
 
 <p>First, I create a WinForm application that toggles <code class="highlighter-rouge">FixedSingle</code> and <code class="highlighter-rouge">Sizable</code> form border style. Then I toggle it <strong>before</strong> and <strong>after modifying subsystem version</strong> with <code class="highlighter-rouge">editbin</code>.</p>
 
-<video width="60%" controls=""><source src="myblog/assets/posts/subsystem-version-and-ws-thickframe/proof-1.mp4" type="video/mp4" /></video>
+<video width="60%" controls=""><source src="/myblog/assets/posts/subsystem-version-and-ws-thickframe/proof-1.mp4" type="video/mp4" /></video>
 
 <p>When subsystem version is &gt;= 6.0, everything is perfect. When subsystem version is &lt; 6.0, the window size doesn’t change, but it is pretty obvious that something is off. I guess WinForm has some sort of workaround like, when resizable is toggled, remember the window size, toggle the window style, and then apply back the window size.</p>
 
@@ -245,7 +245,7 @@ exit/b
 
 <p>Next, I modify the subsystem version of <code class="highlighter-rouge">devenv.exe</code>, and see if anything changes.</p>
 
-<video width="100%" controls=""><source src="myblog/assets/posts/subsystem-version-and-ws-thickframe/proof-2.mp4" type="video/mp4" /></video>
+<video width="100%" controls=""><source src="/myblog/assets/posts/subsystem-version-and-ws-thickframe/proof-2.mp4" type="video/mp4" /></video>
 
 <p>See? With just a change of subsystem version, we can get back the good-old thin window border in Form Designer again.</p>
 

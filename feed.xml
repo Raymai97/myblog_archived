@@ -1,15 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="http://localhost:4000/myblog/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/myblog/" rel="alternate" type="text/html" /><updated>2017-05-03T23:27:29+08:00</updated><id>http://localhost:4000/myblog/</id><title type="html">myblog</title><subtitle>A general blog sharing stuff about Windows, Visual Studio, Programming, Anime, Games and anything from my thought.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="http://localhost:4000/myblog/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/myblog/" rel="alternate" type="text/html" /><updated>2017-05-03T23:33:58+08:00</updated><id>http://localhost:4000/myblog/</id><title type="html">myblog</title><subtitle>A general blog sharing stuff about Windows, Visual Studio, Programming, Anime, Games and anything from my thought.
 </subtitle><entry><title type="html">Subsystem version and WS_THICKFRAME are related somehow</title><link href="http://localhost:4000/myblog/windows/undocd/2017/05/03/subsystem-version-and-ws-thickframe.html" rel="alternate" type="text/html" title="Subsystem version and WS_THICKFRAME are related somehow" /><published>2017-05-03T19:00:00+08:00</published><updated>2017-05-03T19:00:00+08:00</updated><id>http://localhost:4000/myblog/windows/undocd/2017/05/03/subsystem-version-and-ws-thickframe</id><content type="html" xml:base="http://localhost:4000/myblog/windows/undocd/2017/05/03/subsystem-version-and-ws-thickframe.html">&lt;blockquote&gt;
   &lt;p&gt;I always thought it was just an intended change made by the WinForm development team. I was wrong.&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;p&gt;Since Visual Studio 2012, the WinForm designer uses thick window frame even if the form border style is &lt;code class=&quot;highlighter-rouge&quot;&gt;FixedSingle&lt;/code&gt;.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;myblog/assets/posts/subsystem-version-and-ws-thickframe/vs2015-designer-fixedsingle.png&quot; alt=&quot;img&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/myblog/assets/posts/subsystem-version-and-ws-thickframe/vs2015-designer-fixedsingle.png&quot; alt=&quot;img&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;This is how thing was looked like back in the older version of Visual Studio.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;myblog/assets/posts/subsystem-version-and-ws-thickframe/vs2008-designer-fixedsingle.png&quot; alt=&quot;img&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/myblog/assets/posts/subsystem-version-and-ws-thickframe/vs2008-designer-fixedsingle.png&quot; alt=&quot;img&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Do you ever wonder why? Here’s the answer:&lt;/p&gt;
 
@@ -29,7 +29,7 @@
 
 &lt;p&gt;This explains that why sometimes you don’t even have a chance to run a certain program, if your OS version is quite old.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;myblog/assets/posts/subsystem-version-and-ws-thickframe/win2k-cant-run-sdelete.png&quot; alt=&quot;img&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/myblog/assets/posts/subsystem-version-and-ws-thickframe/win2k-cant-run-sdelete.png&quot; alt=&quot;img&quot; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&quot;and-ws_thickframe-would-be&quot;&gt;And WS_THICKFRAME would be…?&lt;/h3&gt;
 
@@ -114,7 +114,7 @@
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;video width=&quot;100%&quot; controls=&quot;&quot;&gt;&lt;source src=&quot;myblog/assets/posts/subsystem-version-and-ws-thickframe/test.mp4&quot; type=&quot;video/mp4&quot; /&gt;&lt;/video&gt;
+&lt;video width=&quot;100%&quot; controls=&quot;&quot;&gt;&lt;source src=&quot;/myblog/assets/posts/subsystem-version-and-ws-thickframe/test.mp4&quot; type=&quot;video/mp4&quot; /&gt;&lt;/video&gt;
 
 &lt;p&gt;It turned out if I compiled with MSVC98 or TDM-GCC, the result would be same with MSVC2005. If I compiled with MSVC2012, the behavior would be same with MSVC2015. My adventurous heart unfortunately awaken at that time, so I compiled the code &lt;em&gt;using MSVC2015 compiler, with MSVC2005 CRT library, and Windows SDK bundled with MSVC98.&lt;/em&gt; Because I was also thinking,&lt;/p&gt;
 
@@ -130,7 +130,7 @@
 
 &lt;p&gt;I ran out of idea. Fine, I changed my mind, I wanted to run the EXE in my Windows XP guest and see what would happen. &lt;strong&gt;I used the &lt;code class=&quot;highlighter-rouge&quot;&gt;editbin&lt;/code&gt; to modify the subsystem version number.&lt;/strong&gt; (For the record, I never install Windows XP targeting toolset because I don’t want to.)&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;myblog/assets/posts/subsystem-version-and-ws-thickframe/seemed-innocent.png&quot; alt=&quot;img&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/myblog/assets/posts/subsystem-version-and-ws-thickframe/seemed-innocent.png&quot; alt=&quot;img&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;I ran the program and toggled again. The result was shocking: &lt;strong&gt;the window size changed.&lt;/strong&gt;&lt;/p&gt;
 
@@ -140,7 +140,7 @@
 
 &lt;p&gt;First, I create a WinForm application that toggles &lt;code class=&quot;highlighter-rouge&quot;&gt;FixedSingle&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;Sizable&lt;/code&gt; form border style. Then I toggle it &lt;strong&gt;before&lt;/strong&gt; and &lt;strong&gt;after modifying subsystem version&lt;/strong&gt; with &lt;code class=&quot;highlighter-rouge&quot;&gt;editbin&lt;/code&gt;.&lt;/p&gt;
 
-&lt;video width=&quot;60%&quot; controls=&quot;&quot;&gt;&lt;source src=&quot;myblog/assets/posts/subsystem-version-and-ws-thickframe/proof-1.mp4&quot; type=&quot;video/mp4&quot; /&gt;&lt;/video&gt;
+&lt;video width=&quot;60%&quot; controls=&quot;&quot;&gt;&lt;source src=&quot;/myblog/assets/posts/subsystem-version-and-ws-thickframe/proof-1.mp4&quot; type=&quot;video/mp4&quot; /&gt;&lt;/video&gt;
 
 &lt;p&gt;When subsystem version is &amp;gt;= 6.0, everything is perfect. When subsystem version is &amp;lt; 6.0, the window size doesn’t change, but it is pretty obvious that something is off. I guess WinForm has some sort of workaround like, when resizable is toggled, remember the window size, toggle the window style, and then apply back the window size.&lt;/p&gt;
 
@@ -167,7 +167,7 @@ exit/b
 
 &lt;p&gt;Next, I modify the subsystem version of &lt;code class=&quot;highlighter-rouge&quot;&gt;devenv.exe&lt;/code&gt;, and see if anything changes.&lt;/p&gt;
 
-&lt;video width=&quot;100%&quot; controls=&quot;&quot;&gt;&lt;source src=&quot;myblog/assets/posts/subsystem-version-and-ws-thickframe/proof-2.mp4&quot; type=&quot;video/mp4&quot; /&gt;&lt;/video&gt;
+&lt;video width=&quot;100%&quot; controls=&quot;&quot;&gt;&lt;source src=&quot;/myblog/assets/posts/subsystem-version-and-ws-thickframe/proof-2.mp4&quot; type=&quot;video/mp4&quot; /&gt;&lt;/video&gt;
 
 &lt;p&gt;See? With just a change of subsystem version, we can get back the good-old thin window border in Form Designer again.&lt;/p&gt;
 
@@ -198,7 +198,7 @@ exit/b
 &lt;h2 id=&quot;part-2-mod-the-files-to-load-kernel31dll-instead&quot;&gt;Part 2: Mod the files to load kernel31.dll instead&lt;/h2&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;Win2K doesn’t support new APIs introduced in WinXP. In this case, all of these APIs are in kernel32.dll. We need a DLL, say, kernel31.dll, which will forward most of the calls to the real kernel32.dll. For “new” APIs, we will provide implementation by ourselves. Creating such DLL requires some programming knowledge. If you know how to create DLL that exports function, then you may refer Part X. Otherwise, you might just want to &lt;a href=&quot;myblog/assets/posts/enable-direct3d-in-win2k-vbox/Kernel31.7z&quot;&gt;download the kernel31.dll here&lt;/a&gt;.&lt;/p&gt;
+  &lt;p&gt;Win2K doesn’t support new APIs introduced in WinXP. In this case, all of these APIs are in kernel32.dll. We need a DLL, say, kernel31.dll, which will forward most of the calls to the real kernel32.dll. For “new” APIs, we will provide implementation by ourselves. Creating such DLL requires some programming knowledge. If you know how to create DLL that exports function, then you may refer Part X. Otherwise, you might just want to &lt;a href=&quot;/myblog/assets/posts/enable-direct3d-in-win2k-vbox/Kernel31.7z&quot;&gt;download the kernel31.dll here&lt;/a&gt;.&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;p&gt;To do this, you need a hex editor. I recommended &lt;a href=&quot;https://mh-nexus.de/en/hxd/&quot;&gt;HxD&lt;/a&gt; as it is free, small and serves the purpose well.&lt;/p&gt;
@@ -224,13 +224,13 @@ exit/b
 Be careful. Sometimes there are more than one occurence in a file.
     &lt;ul&gt;
       &lt;li&gt;This is the &lt;code class=&quot;highlighter-rouge&quot;&gt;kernel32.dll&lt;/code&gt; we are looking for:
-  &lt;img src=&quot;myblog/assets/posts/enable-direct3d-in-win2k-vbox/true-kernel32-string.png&quot; alt=&quot;img&quot; /&gt;&lt;/li&gt;
+  &lt;img src=&quot;/myblog/assets/posts/enable-direct3d-in-win2k-vbox/true-kernel32-string.png&quot; alt=&quot;img&quot; /&gt;&lt;/li&gt;
       &lt;li&gt;This is &lt;strong&gt;NOT&lt;/strong&gt; the one we are looking for:&lt;br /&gt;
-  &lt;img src=&quot;myblog/assets/posts/enable-direct3d-in-win2k-vbox/false-kernel32-string.png&quot; alt=&quot;img&quot; /&gt;&lt;/li&gt;
+  &lt;img src=&quot;/myblog/assets/posts/enable-direct3d-in-win2k-vbox/false-kernel32-string.png&quot; alt=&quot;img&quot; /&gt;&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
   &lt;li&gt;Overwrite so it become &lt;code class=&quot;highlighter-rouge&quot;&gt;kernel31.dll&lt;/code&gt; and save the file.&lt;br /&gt;
-&lt;img src=&quot;myblog/assets/posts/enable-direct3d-in-win2k-vbox/overwrite-like-this.png&quot; alt=&quot;img&quot; /&gt;&lt;/li&gt;
+&lt;img src=&quot;/myblog/assets/posts/enable-direct3d-in-win2k-vbox/overwrite-like-this.png&quot; alt=&quot;img&quot; /&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;h2 id=&quot;part-3-showtime&quot;&gt;Part 3: Showtime&lt;/h2&gt;
@@ -264,7 +264,7 @@ Overwrite the file if prompted.
       &lt;li&gt;VBoxOGLpackspu.dll&lt;/li&gt;
       &lt;li&gt;VBoxOGLpassthroughspu.dll&lt;/li&gt;
       &lt;li&gt;wined3d.dll&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;(myblog/assets/posts/enable-direct3d-in-win2k-vbox/Kernel31.7z)&quot;&gt;Kernel31.dll&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;(/myblog/assets/posts/enable-direct3d-in-win2k-vbox/Kernel31.7z)&quot;&gt;Kernel31.dll&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
 &lt;/ol&gt;
@@ -272,7 +272,7 @@ Overwrite the file if prompted.
 &lt;p&gt;4) Finally, run &lt;code class=&quot;highlighter-rouge&quot;&gt;dxdiag&lt;/code&gt; to see if the Direct3D acceleration is working.&lt;br /&gt;
 It is expected to fail in Direct3D 7, but succeed in Direct3D 8 and 9 test.&lt;br /&gt;
 Here is a screenshot running Touhou games in Win2k VBox guest:&lt;br /&gt;
-&lt;img src=&quot;myblog/assets/posts/enable-direct3d-in-win2k-vbox/proof-running-touhou-rss.png&quot; alt=&quot;img&quot; /&gt;&lt;/p&gt;
+&lt;img src=&quot;/myblog/assets/posts/enable-direct3d-in-win2k-vbox/proof-running-touhou-rss.png&quot; alt=&quot;img&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;part-x-creating-the-kernel31dll&quot;&gt;Part X: Creating the Kernel31.dll&lt;/h2&gt;
 
@@ -297,5 +297,5 @@ Here is a screenshot running Touhou games in Win2k VBox guest:&lt;br /&gt;
   &lt;li&gt;Make sure you use .def file, or the exported symbol will be decorated and your DLL wouldn’t work.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;img src=&quot;myblog/assets/posts/enable-direct3d-in-win2k-vbox/bad-example.png&quot; alt=&quot;img&quot; /&gt;
-&lt;img src=&quot;myblog/assets/posts/enable-direct3d-in-win2k-vbox/good-example.png&quot; alt=&quot;img&quot; /&gt;&lt;/p&gt;</content><author><name></name></author><summary type="html">VBox version: v5.0.10.r104061</summary></entry></feed>
+&lt;p&gt;&lt;img src=&quot;/myblog/assets/posts/enable-direct3d-in-win2k-vbox/bad-example.png&quot; alt=&quot;img&quot; /&gt;
+&lt;img src=&quot;/myblog/assets/posts/enable-direct3d-in-win2k-vbox/good-example.png&quot; alt=&quot;img&quot; /&gt;&lt;/p&gt;</content><author><name></name></author><summary type="html">VBox version: v5.0.10.r104061</summary></entry></feed>

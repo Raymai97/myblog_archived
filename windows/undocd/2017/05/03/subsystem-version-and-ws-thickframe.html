@@ -69,7 +69,7 @@
   <header class="post-header">
     <h1 class="post-title" itemprop="name headline">Subsystem version and WS_THICKFRAME are related somehow</h1>
     <p class="post-meta">
-      <time datetime="2017-05-03T19:00:00+08:00" itemprop="datePublished">
+      <time datetime="2017-05-03T23:00:00+08:00" itemprop="datePublished">
         
         May 3, 2017
       </time>
@@ -111,147 +111,87 @@
 
 <h3 id="and-ws_thickframe-would-be">And WS_THICKFRAME would be…?</h3>
 
-<p>In simple word, it is a window style that determines if the window can be resized or not.</p>
-
-<p>In earlier version of Windows, resizable window has thicker window border than unresizable window, hence the name.</p>
+<p>In simple word, it is a window style that determines if the window can be resized or not. In the old days where DWM is not enabled, resizable window has thicker window border than unresizable window, hence the name.</p>
 
 <h3 id="arent-they-totally-unrelated">Aren’t they totally unrelated?</h3>
 
 <p>I had the same thought too, until this happened to me.</p>
 
-<p>I was developing a Win32 GUI framework. During debugging, I found an inconsistent behavior between the build that compiled using MSVC2005 and MSVC2015. The test subject was toggling the <code class="highlighter-rouge">Resizable</code> (which toggle the <code class="highlighter-rouge">WS_THICKFRAME</code>). In MSVC2015 build, the window size remained the same. In MSVC2005 build, the window size <em>changed</em>.</p>
+<p>I was developing a Win32 GUI framework. During debugging, I found an inconsistent behavior between the build that compiled using MSVC2005 and MSVC2015. The test subject was toggling the <code class="highlighter-rouge">Resizable</code> (which toggle the <code class="highlighter-rouge">WS_THICKFRAME</code>). In MSVC2015 build, the client size remained the same. In MSVC2005 build, <strong>the client size changed</strong>.</p>
 
-<p>So I tried to pinpoint the root cause of problem. With debugger, I found the problem was occured at a line of code. The code would call <code class="highlighter-rouge">SetWindowLong</code> the <code class="highlighter-rouge">GWL_STYLE</code> to enable or disable the <code class="highlighter-rouge">WS_THICKFRAME</code> window style. So I coded a minimal Win32 GUI app just to see what would happen when I toggled the style.</p>
+<p>So I tried to pinpoint the root cause of problem. With debugger, I found the problem was occured at a line of code. The code would call <code class="highlighter-rouge">SetWindowLong</code> the <code class="highlighter-rouge">GWL_STYLE</code> to enable or disable the <code class="highlighter-rouge">WS_THICKFRAME</code> window style. So I coded <a href="/myblog/assets/posts/subsystem-version-and-ws-thickframe/test.cpp">a minimal Win32 C++ GUI app</a> just to see what would happen when I toggled the style.</p>
 
-<div class="language-c highlighter-rouge"><pre class="highlight"><code><span class="cp">#include &lt;Windows.h&gt;
-#include &lt;tchar.h&gt;
-#include &lt;stdio.h&gt;
-</span>
-<span class="n">LPCTSTR</span> <span class="n">g_WindowClass</span> <span class="o">=</span> <span class="n">_T</span><span class="p">(</span><span class="s">"TestApp"</span><span class="p">);</span>
-<span class="n">LPCTSTR</span> <span class="n">g_WindowTitle</span> <span class="o">=</span> <span class="n">_T</span><span class="p">(</span><span class="s">"TestApp"</span><span class="p">);</span>
-<span class="n">DWORD</span> <span class="n">g_style</span> <span class="o">=</span> <span class="n">WS_OVERLAPPED</span> <span class="o">|</span> <span class="n">WS_CAPTION</span> <span class="o">|</span> <span class="n">WS_SYSMENU</span> <span class="o">|</span>
-	<span class="n">WS_MINIMIZEBOX</span> <span class="o">|</span> <span class="n">WS_MAXIMIZEBOX</span> <span class="o">|</span> <span class="n">WS_THICKFRAME</span><span class="p">;</span>
+<video controls=""><source src="/myblog/assets/posts/subsystem-version-and-ws-thickframe/test.mp4" type="video/mp4" /></video>
 
-<span class="n">LRESULT</span> <span class="n">CALLBACK</span> <span class="n">WndProc</span><span class="p">(</span><span class="n">HWND</span><span class="p">,</span> <span class="n">UINT</span><span class="p">,</span> <span class="n">WPARAM</span><span class="p">,</span> <span class="n">LPARAM</span><span class="p">);</span>
-<span class="n">HWND</span> <span class="n">MyCreateWindow</span><span class="p">();</span>
+<p>WTF? Fine, I changed my mind, I wanted to run the EXE in my Windows XP guest and see what would happen. <strong>I used the <code class="highlighter-rouge">editbin</code> to modify the subsystem version number.</strong> (For the record, I never install Windows XP targeting toolset because I don’t want to.)</p>
 
-<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
-<span class="p">{</span>
-	<span class="n">ShowWindow</span><span class="p">(</span><span class="n">MyCreateWindow</span><span class="p">(),</span> <span class="n">SW_SHOWNORMAL</span><span class="p">);</span>
-	<span class="n">MSG</span> <span class="n">msg</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">};</span>
-	<span class="k">while</span> <span class="p">(</span><span class="n">GetMessage</span><span class="p">(</span><span class="o">&amp;</span><span class="n">msg</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="p">{</span>
-		<span class="n">TranslateMessage</span><span class="p">(</span><span class="o">&amp;</span><span class="n">msg</span><span class="p">);</span>
-		<span class="n">DispatchMessage</span><span class="p">(</span><span class="o">&amp;</span><span class="n">msg</span><span class="p">);</span>
-	<span class="p">}</span>
-	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span>
+<p><img src="/myblog/assets/posts/subsystem-version-and-ws-thickframe/sendto-editbin.png" alt="img" /></p>
 
-<span class="n">LRESULT</span> <span class="n">CALLBACK</span> <span class="nf">WndProc</span><span class="p">(</span><span class="n">HWND</span> <span class="n">hwnd</span><span class="p">,</span> <span class="n">UINT</span> <span class="n">msg</span><span class="p">,</span> <span class="n">WPARAM</span> <span class="n">w</span><span class="p">,</span> <span class="n">LPARAM</span> <span class="n">l</span><span class="p">)</span>
-<span class="p">{</span>
-	<span class="k">switch</span> <span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="p">{</span>
-	<span class="k">case</span> <span class="n">WM_KEYDOWN</span><span class="p">:</span>
-		<span class="n">g_style</span> <span class="o">=</span> <span class="n">GetWindowLong</span><span class="p">(</span><span class="n">hwnd</span><span class="p">,</span> <span class="n">GWL_STYLE</span><span class="p">);</span>
-		<span class="k">if</span> <span class="p">((</span><span class="n">g_style</span> <span class="o">&amp;</span> <span class="n">WS_THICKFRAME</span><span class="p">)</span> <span class="o">==</span> <span class="n">WS_THICKFRAME</span><span class="p">)</span> <span class="p">{</span>
-			<span class="n">g_style</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">WS_THICKFRAME</span><span class="p">;</span>
-			<span class="n">printf</span><span class="p">(</span><span class="s">"- WS_THICKFRAME </span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
-		<span class="p">}</span>
-		<span class="k">else</span> <span class="p">{</span>
-			<span class="n">g_style</span> <span class="o">|=</span> <span class="n">WS_THICKFRAME</span><span class="p">;</span>
-			<span class="n">printf</span><span class="p">(</span><span class="s">"+ WS_THICKFRAME </span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
-		<span class="p">}</span>
-		<span class="n">SetWindowLong</span><span class="p">(</span><span class="n">hwnd</span><span class="p">,</span> <span class="n">GWL_STYLE</span><span class="p">,</span> <span class="n">g_style</span><span class="p">);</span>
-		<span class="n">SetWindowPos</span><span class="p">(</span><span class="n">hwnd</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
-			<span class="n">SWP_NOZORDER</span> <span class="o">|</span> <span class="n">SWP_NOMOVE</span> <span class="o">|</span> <span class="n">SWP_NOSIZE</span> <span class="o">|</span>
-			<span class="n">SWP_FRAMECHANGED</span><span class="p">);</span>
-		<span class="k">break</span><span class="p">;</span>
-	<span class="k">case</span> <span class="n">WM_DESTROY</span><span class="p">:</span>
-		<span class="n">PostQuitMessage</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
-		<span class="k">break</span><span class="p">;</span>
-	<span class="nl">default:</span>
-		<span class="k">return</span> <span class="n">DefWindowProc</span><span class="p">(</span><span class="n">hwnd</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">l</span><span class="p">);</span>
-	<span class="p">}</span>
-	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="n">HWND</span> <span class="nf">MyCreateWindow</span><span class="p">()</span>
-<span class="p">{</span>
-	<span class="n">WNDCLASSEX</span> <span class="n">wcex</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">};</span>
-	<span class="n">wcex</span><span class="p">.</span><span class="n">cbSize</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">wcex</span><span class="p">);</span>
-	<span class="n">wcex</span><span class="p">.</span><span class="n">hbrBackground</span> <span class="o">=</span> <span class="n">GetSysColorBrush</span><span class="p">(</span><span class="n">COLOR_3DFACE</span><span class="p">);</span>
-	<span class="n">wcex</span><span class="p">.</span><span class="n">hCursor</span> <span class="o">=</span> <span class="n">LoadCursor</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="n">IDC_ARROW</span><span class="p">);</span>
-	<span class="n">wcex</span><span class="p">.</span><span class="n">lpszClassName</span> <span class="o">=</span> <span class="n">g_WindowClass</span><span class="p">;</span>
-	<span class="n">wcex</span><span class="p">.</span><span class="n">lpfnWndProc</span> <span class="o">=</span> <span class="n">WndProc</span><span class="p">;</span>
-	<span class="n">wcex</span><span class="p">.</span><span class="n">style</span> <span class="o">=</span> <span class="n">CS_HREDRAW</span> <span class="o">|</span> <span class="n">CS_VREDRAW</span><span class="p">;</span>
-	<span class="n">RegisterClassEx</span><span class="p">(</span><span class="o">&amp;</span><span class="n">wcex</span><span class="p">);</span>
-	<span class="n">HWND</span> <span class="n">hwnd</span> <span class="o">=</span> <span class="n">CreateWindowEx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span>
-		<span class="n">g_WindowClass</span><span class="p">,</span> <span class="n">g_WindowTitle</span><span class="p">,</span> <span class="n">g_style</span><span class="p">,</span>
-		<span class="n">CW_USEDEFAULT</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span>
-		<span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
-	<span class="k">return</span> <span class="n">hwnd</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre>
-</div>
-
-<video width="100%" controls=""><source src="/myblog/assets/posts/subsystem-version-and-ws-thickframe/test.mp4" type="video/mp4" /></video>
-
-<p>It turned out if I compiled with MSVC98 or TDM-GCC, the result would be same with MSVC2005. If I compiled with MSVC2012, the behavior would be same with MSVC2015. My adventurous heart unfortunately awaken at that time, so I compiled the code <em>using MSVC2015 compiler, with MSVC2005 CRT library, and Windows SDK bundled with MSVC98.</em> Because I was also thinking,</p>
+<p>I ran the program again, and after I toggled the style, <strong>the client size changed.</strong></p>
 
 <blockquote>
-  <p>There must be something fishy with the Windows SDK came with MSVC2015!</p>
+  <p>Wait. Visual Studio 2010 is the last version that runs on Windows XP, while Visual Studio 2012 is the first version that starts to use thick window frame for <code class="highlighter-rouge">FixedSingle</code>. They were connected, weren’t they?!</p>
 </blockquote>
 
-<p>And the result? It wouldn’t compile, error message was something about <code class="highlighter-rouge">security_cookie</code>. Never mind, I added the <code class="highlighter-rouge">-GS-</code> compiler flag and try again. A warning message appeared, but the compilation succeeded anyway, so I ran the program, toggled the style and I found…</p>
-
-<blockquote>
-  <p>… the window size remained the same.</p>
-</blockquote>
-
-<p>I ran out of idea. Fine, I changed my mind, I wanted to run the EXE in my Windows XP guest and see what would happen. <strong>I used the <code class="highlighter-rouge">editbin</code> to modify the subsystem version number.</strong> (For the record, I never install Windows XP targeting toolset because I don’t want to.)</p>
-
-<p><img src="/myblog/assets/posts/subsystem-version-and-ws-thickframe/seemed-innocent.png" alt="img" /></p>
-
-<p>I ran the program and toggled again. The result was shocking: <strong>the window size changed.</strong></p>
-
-<p>Wait. Visual Studio 2010 is the last version that runs on Windows XP, while Visual Studio 2012 is the first version that starts to use thick window frame for <code class="highlighter-rouge">FixedSingle</code>. They were connected, weren’t they?! I always thought it was just an intended change made by the WinForm development team. I was wrong.</p>
+<p>I got it now! I always thought it was just an intended change made by the WinForm development team. I was wrong.</p>
 
 <h3 id="lets-prove-with-proof">Let’s prove with proof</h3>
 
-<p>First, I create a WinForm application that toggles <code class="highlighter-rouge">FixedSingle</code> and <code class="highlighter-rouge">Sizable</code> form border style. Then I toggle it <strong>before</strong> and <strong>after modifying subsystem version</strong> with <code class="highlighter-rouge">editbin</code>.</p>
+<p>First, a WinForm application that toggles <code class="highlighter-rouge">FixedSingle</code> and <code class="highlighter-rouge">Sizable</code> form border style. Test the program <strong>before and after changing subsystem version to 6.0</strong> with a batch file that calls <code class="highlighter-rouge">editbin</code>. <a href="/myblog/assets/posts/subsystem-version-and-ws-thickframe/set-vista-as-min-winver.cmd">set-vista-as-min-winver.cmd</a></p>
 
-<video width="60%" controls=""><source src="/myblog/assets/posts/subsystem-version-and-ws-thickframe/proof-1.mp4" type="video/mp4" /></video>
+<video controls=""><source src="/myblog/assets/posts/subsystem-version-and-ws-thickframe/proof-winform.mp4" type="video/mp4" /></video>
 
-<p>When subsystem version is &gt;= 6.0, everything is perfect. When subsystem version is &lt; 6.0, the window size doesn’t change, but it is pretty obvious that something is off. I guess WinForm has some sort of workaround like, when resizable is toggled, remember the window size, toggle the window style, and then apply back the window size.</p>
-
-<p>In case you are curious about the content of batch file:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>@echo off
-cd /d %~dp0
-if "%~1"=="" goto :bad_usage
-title %~1
-dumpbin /headers "%~1" ^
-	| find "subsystem (Windows CUI)" &gt;nul ^
-	&amp;&amp; (set subs=console) ^
-	|| (set subs=windows)
-
-echo Subsystem detected: %subs%
-editbin "%~1" /osversion:6.0 /subsystem:%subs%,6.0 || pause
-exit/b
-
-:bad_usage
-echo Usage: %~nx0 [exe filepath]
-pause
-exit/b
+<p><a name="winform-workaround"></a>
+Well, the client size doesn’t change, but you can see that something is off. I guess WinForm has workaround like</p>
+<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">ToggleResizable</span><span class="p">(</span><span class="kt">bool</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">auto</span> <span class="n">size</span> <span class="o">=</span> <span class="n">GetClientSize</span><span class="p">();</span>
+	<span class="n">RealToggleResizable</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>
+	<span class="n">SetClientSize</span><span class="p">(</span><span class="n">size</span><span class="p">);</span>
+<span class="p">}</span>
 </code></pre>
 </div>
 
-<p>Next, I modify the subsystem version of <code class="highlighter-rouge">devenv.exe</code>, and see if anything changes.</p>
+<p>Next, let’s try this trick on Visual Studio 2015. I modify the subsystem version of <code class="highlighter-rouge">devenv.exe</code>, and see if anything changes.</p>
 
-<video width="100%" controls=""><source src="/myblog/assets/posts/subsystem-version-and-ws-thickframe/proof-2.mp4" type="video/mp4" /></video>
+<video controls=""><source src="/myblog/assets/posts/subsystem-version-and-ws-thickframe/proof-vs2015.mp4" type="video/mp4" /></video>
 
-<p>See? With just a change of subsystem version, we can get back the good-old thin window border in Form Designer again.</p>
+<p>See? With just a change of a byte, we can get back the good-old thin window border in Form Designer again.</p>
+
+<h3 id="your-window-theme-does-matter-too">Your window theme does matter too</h3>
+
+<h4 id="for-win32-c">For Win32 C++</h4>
+<div class="language-c highlighter-rouge"><pre class="highlight"><code><span class="k">if</span> <span class="p">(</span> <span class="n">usingClassicTheme</span><span class="p">()</span> <span class="o">||</span> <span class="n">subsystem_ver</span> <span class="o">&lt;</span> <span class="mi">6</span><span class="p">.</span><span class="mi">0</span> <span class="p">)</span> <span class="p">{</span>
+	<span class="n">ASSERT</span><span class="p">(</span> <span class="n">client_size_will_change</span> <span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>v5.0:</p>
+<video controls=""><source src="/myblog/assets/posts/subsystem-version-and-ws-thickframe/test-v5.mp4" type="video/mp4" /></video>
+<p>v6.0:</p>
+<video controls=""><source src="/myblog/assets/posts/subsystem-version-and-ws-thickframe/test-v6.mp4" type="video/mp4" /></video>
+<p><a href="/myblog/assets/posts/subsystem-version-and-ws-thickframe/test-v5-v6.7z">test-v5-v6.7z</a></p>
+
+<h4 id="for-winform">For WinForm</h4>
+<div class="language-c highlighter-rouge"><pre class="highlight"><code><span class="n">ASSERT</span><span class="p">(</span> <span class="n">client_size_never_change</span> <span class="p">);</span> <span class="c1">// but
+</span><span class="k">if</span> <span class="p">(</span> <span class="n">subsystem_ver</span> <span class="o">&lt;</span> <span class="mi">6</span><span class="p">.</span><span class="mi">0</span> <span class="p">)</span> <span class="p">{</span>
+	<span class="c1">// you can see something is off
+</span>	<span class="c1">// because it is WinForm's workaround after all
+</span><span class="p">}</span>
+</code></pre>
+</div>
+<p>v5.0:</p>
+<video controls=""><source src="/myblog/assets/posts/subsystem-version-and-ws-thickframe/winform-v5.mp4" type="video/mp4" /></video>
+<p><br />
+v6.0:</p>
+<video controls=""><source src="/myblog/assets/posts/subsystem-version-and-ws-thickframe/winform-v6.mp4" type="video/mp4" /></video>
+<p><a href="/myblog/assets/posts/subsystem-version-and-ws-thickframe/winform-v5-v6.7z">winform-v5-v6.7z</a></p>
 
 <h3 id="conclusion">Conclusion</h3>
 
-<p><strong>When toggling <code class="highlighter-rouge">WS_THICKFRAME</code>, if subsystem version of EXE is &gt;= 6.0, the window will never resize, and vice versa.</strong> I guess this is some kind of “compatibility trick” by Windows developer team, because back in earlier version of Windows, window will be resized too, just not that obvious. I would call it a failure though, because different version of Windows resizes the window differently. This “trick” only creates confusion in my opinion.</p>
+<p>If you’re developing with WinForm, then good for you, you don’t actually have to do anything, because you can assume the client size never change by itself. That little oddity is not really a big matter. Who would toggle the window style every two seconds?</p>
+
+<p>If you’re developing Win32 application, then you have to make up your mind. Set subsystem version to 6.0 is probably the most easy thing to do, but it is not consistent enough IMO because the size still changes if user is using Windows Classic theme. You might want to use the <a href="#winform-workaround">WinForm workaround I proposed</a> up there. If you really want the ultimate consistency (like me), then you should never toggle the <code class="highlighter-rouge">WS_THICKFRAME</code>. There are other ways to prevent the window from resizing, I will leave that to you.</p>
 
   </div>
 

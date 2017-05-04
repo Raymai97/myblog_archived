@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="http://localhost:4000/myblog/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/myblog/" rel="alternate" type="text/html" /><updated>2017-05-03T23:33:58+08:00</updated><id>http://localhost:4000/myblog/</id><title type="html">myblog</title><subtitle>A general blog sharing stuff about Windows, Visual Studio, Programming, Anime, Games and anything from my thought.
-</subtitle><entry><title type="html">Subsystem version and WS_THICKFRAME are related somehow</title><link href="http://localhost:4000/myblog/windows/undocd/2017/05/03/subsystem-version-and-ws-thickframe.html" rel="alternate" type="text/html" title="Subsystem version and WS_THICKFRAME are related somehow" /><published>2017-05-03T19:00:00+08:00</published><updated>2017-05-03T19:00:00+08:00</updated><id>http://localhost:4000/myblog/windows/undocd/2017/05/03/subsystem-version-and-ws-thickframe</id><content type="html" xml:base="http://localhost:4000/myblog/windows/undocd/2017/05/03/subsystem-version-and-ws-thickframe.html">&lt;blockquote&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="http://localhost:4000/myblog/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/myblog/" rel="alternate" type="text/html" /><updated>2017-05-04T12:25:36+08:00</updated><id>http://localhost:4000/myblog/</id><title type="html">myblog</title><subtitle>A general blog sharing stuff about Windows, Visual Studio, Programming, Anime, Games and anything from my thought.
+</subtitle><entry><title type="html">Subsystem version and WS_THICKFRAME are related somehow</title><link href="http://localhost:4000/myblog/windows/undocd/2017/05/03/subsystem-version-and-ws-thickframe.html" rel="alternate" type="text/html" title="Subsystem version and WS_THICKFRAME are related somehow" /><published>2017-05-03T23:00:00+08:00</published><updated>2017-05-03T23:00:00+08:00</updated><id>http://localhost:4000/myblog/windows/undocd/2017/05/03/subsystem-version-and-ws-thickframe</id><content type="html" xml:base="http://localhost:4000/myblog/windows/undocd/2017/05/03/subsystem-version-and-ws-thickframe.html">&lt;blockquote&gt;
   &lt;p&gt;I always thought it was just an intended change made by the WinForm development team. I was wrong.&lt;/p&gt;
 &lt;/blockquote&gt;
 
@@ -33,147 +33,87 @@
 
 &lt;h3 id=&quot;and-ws_thickframe-would-be&quot;&gt;And WS_THICKFRAME would be…?&lt;/h3&gt;
 
-&lt;p&gt;In simple word, it is a window style that determines if the window can be resized or not.&lt;/p&gt;
-
-&lt;p&gt;In earlier version of Windows, resizable window has thicker window border than unresizable window, hence the name.&lt;/p&gt;
+&lt;p&gt;In simple word, it is a window style that determines if the window can be resized or not. In the old days where DWM is not enabled, resizable window has thicker window border than unresizable window, hence the name.&lt;/p&gt;
 
 &lt;h3 id=&quot;arent-they-totally-unrelated&quot;&gt;Aren’t they totally unrelated?&lt;/h3&gt;
 
 &lt;p&gt;I had the same thought too, until this happened to me.&lt;/p&gt;
 
-&lt;p&gt;I was developing a Win32 GUI framework. During debugging, I found an inconsistent behavior between the build that compiled using MSVC2005 and MSVC2015. The test subject was toggling the &lt;code class=&quot;highlighter-rouge&quot;&gt;Resizable&lt;/code&gt; (which toggle the &lt;code class=&quot;highlighter-rouge&quot;&gt;WS_THICKFRAME&lt;/code&gt;). In MSVC2015 build, the window size remained the same. In MSVC2005 build, the window size &lt;em&gt;changed&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;I was developing a Win32 GUI framework. During debugging, I found an inconsistent behavior between the build that compiled using MSVC2005 and MSVC2015. The test subject was toggling the &lt;code class=&quot;highlighter-rouge&quot;&gt;Resizable&lt;/code&gt; (which toggle the &lt;code class=&quot;highlighter-rouge&quot;&gt;WS_THICKFRAME&lt;/code&gt;). In MSVC2015 build, the client size remained the same. In MSVC2005 build, &lt;strong&gt;the client size changed&lt;/strong&gt;.&lt;/p&gt;
 
-&lt;p&gt;So I tried to pinpoint the root cause of problem. With debugger, I found the problem was occured at a line of code. The code would call &lt;code class=&quot;highlighter-rouge&quot;&gt;SetWindowLong&lt;/code&gt; the &lt;code class=&quot;highlighter-rouge&quot;&gt;GWL_STYLE&lt;/code&gt; to enable or disable the &lt;code class=&quot;highlighter-rouge&quot;&gt;WS_THICKFRAME&lt;/code&gt; window style. So I coded a minimal Win32 GUI app just to see what would happen when I toggled the style.&lt;/p&gt;
+&lt;p&gt;So I tried to pinpoint the root cause of problem. With debugger, I found the problem was occured at a line of code. The code would call &lt;code class=&quot;highlighter-rouge&quot;&gt;SetWindowLong&lt;/code&gt; the &lt;code class=&quot;highlighter-rouge&quot;&gt;GWL_STYLE&lt;/code&gt; to enable or disable the &lt;code class=&quot;highlighter-rouge&quot;&gt;WS_THICKFRAME&lt;/code&gt; window style. So I coded &lt;a href=&quot;/myblog/assets/posts/subsystem-version-and-ws-thickframe/test.cpp&quot;&gt;a minimal Win32 C++ GUI app&lt;/a&gt; just to see what would happen when I toggled the style.&lt;/p&gt;
 
-&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include &amp;lt;Windows.h&amp;gt;
-#include &amp;lt;tchar.h&amp;gt;
-#include &amp;lt;stdio.h&amp;gt;
-&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;LPCTSTR&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g_WindowClass&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;TestApp&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;LPCTSTR&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g_WindowTitle&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;TestApp&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;DWORD&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g_style&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WS_OVERLAPPED&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WS_CAPTION&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WS_SYSMENU&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;WS_MINIMIZEBOX&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WS_MAXIMIZEBOX&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WS_THICKFRAME&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;video controls=&quot;&quot;&gt;&lt;source src=&quot;/myblog/assets/posts/subsystem-version-and-ws-thickframe/test.mp4&quot; type=&quot;video/mp4&quot; /&gt;&lt;/video&gt;
 
-&lt;span class=&quot;n&quot;&gt;LRESULT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CALLBACK&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WndProc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;HWND&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;UINT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WPARAM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LPARAM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;HWND&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MyCreateWindow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+&lt;p&gt;WTF? Fine, I changed my mind, I wanted to run the EXE in my Windows XP guest and see what would happen. &lt;strong&gt;I used the &lt;code class=&quot;highlighter-rouge&quot;&gt;editbin&lt;/code&gt; to modify the subsystem version number.&lt;/strong&gt; (For the record, I never install Windows XP targeting toolset because I don’t want to.)&lt;/p&gt;
 
-&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;ShowWindow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MyCreateWindow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SW_SHOWNORMAL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;MSG&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
-	&lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GetMessage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-		&lt;span class=&quot;n&quot;&gt;TranslateMessage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-		&lt;span class=&quot;n&quot;&gt;DispatchMessage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-	&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;p&gt;&lt;img src=&quot;/myblog/assets/posts/subsystem-version-and-ws-thickframe/sendto-editbin.png&quot; alt=&quot;img&quot; /&gt;&lt;/p&gt;
 
-&lt;span class=&quot;n&quot;&gt;LRESULT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CALLBACK&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;WndProc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;HWND&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hwnd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;UINT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WPARAM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LPARAM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-	&lt;span class=&quot;k&quot;&gt;switch&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-	&lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WM_KEYDOWN&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-		&lt;span class=&quot;n&quot;&gt;g_style&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GetWindowLong&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hwnd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GWL_STYLE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-		&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g_style&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WS_THICKFRAME&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WS_THICKFRAME&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-			&lt;span class=&quot;n&quot;&gt;g_style&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;~&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;WS_THICKFRAME&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-			&lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;- WS_THICKFRAME &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-		&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-		&lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-			&lt;span class=&quot;n&quot;&gt;g_style&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WS_THICKFRAME&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-			&lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;+ WS_THICKFRAME &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-		&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-		&lt;span class=&quot;n&quot;&gt;SetWindowLong&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hwnd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GWL_STYLE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g_style&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-		&lt;span class=&quot;n&quot;&gt;SetWindowPos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hwnd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-			&lt;span class=&quot;n&quot;&gt;SWP_NOZORDER&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SWP_NOMOVE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SWP_NOSIZE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
-			&lt;span class=&quot;n&quot;&gt;SWP_FRAMECHANGED&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-		&lt;span class=&quot;k&quot;&gt;break&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-	&lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WM_DESTROY&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-		&lt;span class=&quot;n&quot;&gt;PostQuitMessage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-		&lt;span class=&quot;k&quot;&gt;break&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-	&lt;span class=&quot;nl&quot;&gt;default:&lt;/span&gt;
-		&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DefWindowProc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hwnd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-	&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;HWND&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;MyCreateWindow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;WNDCLASSEX&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;wcex&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;wcex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cbSize&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;wcex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;wcex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hbrBackground&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GetSysColorBrush&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;COLOR_3DFACE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;wcex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hCursor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LoadCursor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;IDC_ARROW&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;wcex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lpszClassName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g_WindowClass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;wcex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lpfnWndProc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WndProc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;wcex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;style&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CS_HREDRAW&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CS_VREDRAW&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;RegisterClassEx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;wcex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;HWND&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hwnd&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CreateWindowEx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-		&lt;span class=&quot;n&quot;&gt;g_WindowClass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g_WindowTitle&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g_style&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-		&lt;span class=&quot;n&quot;&gt;CW_USEDEFAULT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;300&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;300&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-		&lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-	&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hwnd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;video width=&quot;100%&quot; controls=&quot;&quot;&gt;&lt;source src=&quot;/myblog/assets/posts/subsystem-version-and-ws-thickframe/test.mp4&quot; type=&quot;video/mp4&quot; /&gt;&lt;/video&gt;
-
-&lt;p&gt;It turned out if I compiled with MSVC98 or TDM-GCC, the result would be same with MSVC2005. If I compiled with MSVC2012, the behavior would be same with MSVC2015. My adventurous heart unfortunately awaken at that time, so I compiled the code &lt;em&gt;using MSVC2015 compiler, with MSVC2005 CRT library, and Windows SDK bundled with MSVC98.&lt;/em&gt; Because I was also thinking,&lt;/p&gt;
+&lt;p&gt;I ran the program again, and after I toggled the style, &lt;strong&gt;the client size changed.&lt;/strong&gt;&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;There must be something fishy with the Windows SDK came with MSVC2015!&lt;/p&gt;
+  &lt;p&gt;Wait. Visual Studio 2010 is the last version that runs on Windows XP, while Visual Studio 2012 is the first version that starts to use thick window frame for &lt;code class=&quot;highlighter-rouge&quot;&gt;FixedSingle&lt;/code&gt;. They were connected, weren’t they?!&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;And the result? It wouldn’t compile, error message was something about &lt;code class=&quot;highlighter-rouge&quot;&gt;security_cookie&lt;/code&gt;. Never mind, I added the &lt;code class=&quot;highlighter-rouge&quot;&gt;-GS-&lt;/code&gt; compiler flag and try again. A warning message appeared, but the compilation succeeded anyway, so I ran the program, toggled the style and I found…&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;… the window size remained the same.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;I ran out of idea. Fine, I changed my mind, I wanted to run the EXE in my Windows XP guest and see what would happen. &lt;strong&gt;I used the &lt;code class=&quot;highlighter-rouge&quot;&gt;editbin&lt;/code&gt; to modify the subsystem version number.&lt;/strong&gt; (For the record, I never install Windows XP targeting toolset because I don’t want to.)&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/myblog/assets/posts/subsystem-version-and-ws-thickframe/seemed-innocent.png&quot; alt=&quot;img&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;I ran the program and toggled again. The result was shocking: &lt;strong&gt;the window size changed.&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Wait. Visual Studio 2010 is the last version that runs on Windows XP, while Visual Studio 2012 is the first version that starts to use thick window frame for &lt;code class=&quot;highlighter-rouge&quot;&gt;FixedSingle&lt;/code&gt;. They were connected, weren’t they?! I always thought it was just an intended change made by the WinForm development team. I was wrong.&lt;/p&gt;
+&lt;p&gt;I got it now! I always thought it was just an intended change made by the WinForm development team. I was wrong.&lt;/p&gt;
 
 &lt;h3 id=&quot;lets-prove-with-proof&quot;&gt;Let’s prove with proof&lt;/h3&gt;
 
-&lt;p&gt;First, I create a WinForm application that toggles &lt;code class=&quot;highlighter-rouge&quot;&gt;FixedSingle&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;Sizable&lt;/code&gt; form border style. Then I toggle it &lt;strong&gt;before&lt;/strong&gt; and &lt;strong&gt;after modifying subsystem version&lt;/strong&gt; with &lt;code class=&quot;highlighter-rouge&quot;&gt;editbin&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;First, a WinForm application that toggles &lt;code class=&quot;highlighter-rouge&quot;&gt;FixedSingle&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;Sizable&lt;/code&gt; form border style. Test the program &lt;strong&gt;before and after changing subsystem version to 6.0&lt;/strong&gt; with a batch file that calls &lt;code class=&quot;highlighter-rouge&quot;&gt;editbin&lt;/code&gt;. &lt;a href=&quot;/myblog/assets/posts/subsystem-version-and-ws-thickframe/set-vista-as-min-winver.cmd&quot;&gt;set-vista-as-min-winver.cmd&lt;/a&gt;&lt;/p&gt;
 
-&lt;video width=&quot;60%&quot; controls=&quot;&quot;&gt;&lt;source src=&quot;/myblog/assets/posts/subsystem-version-and-ws-thickframe/proof-1.mp4&quot; type=&quot;video/mp4&quot; /&gt;&lt;/video&gt;
+&lt;video controls=&quot;&quot;&gt;&lt;source src=&quot;/myblog/assets/posts/subsystem-version-and-ws-thickframe/proof-winform.mp4&quot; type=&quot;video/mp4&quot; /&gt;&lt;/video&gt;
 
-&lt;p&gt;When subsystem version is &amp;gt;= 6.0, everything is perfect. When subsystem version is &amp;lt; 6.0, the window size doesn’t change, but it is pretty obvious that something is off. I guess WinForm has some sort of workaround like, when resizable is toggled, remember the window size, toggle the window style, and then apply back the window size.&lt;/p&gt;
-
-&lt;p&gt;In case you are curious about the content of batch file:&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;@echo off
-cd /d %~dp0
-if &quot;%~1&quot;==&quot;&quot; goto :bad_usage
-title %~1
-dumpbin /headers &quot;%~1&quot; ^
-	| find &quot;subsystem (Windows CUI)&quot; &amp;gt;nul ^
-	&amp;amp;&amp;amp; (set subs=console) ^
-	|| (set subs=windows)
-
-echo Subsystem detected: %subs%
-editbin &quot;%~1&quot; /osversion:6.0 /subsystem:%subs%,6.0 || pause
-exit/b
-
-:bad_usage
-echo Usage: %~nx0 [exe filepath]
-pause
-exit/b
+&lt;p&gt;&lt;a name=&quot;winform-workaround&quot;&gt;&lt;/a&gt;
+Well, the client size doesn’t change, but you can see that something is off. I guess WinForm has workaround like&lt;/p&gt;
+&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;ToggleResizable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;bool&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;val&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;auto&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GetClientSize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;RealToggleResizable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;val&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;SetClientSize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;Next, I modify the subsystem version of &lt;code class=&quot;highlighter-rouge&quot;&gt;devenv.exe&lt;/code&gt;, and see if anything changes.&lt;/p&gt;
+&lt;p&gt;Next, let’s try this trick on Visual Studio 2015. I modify the subsystem version of &lt;code class=&quot;highlighter-rouge&quot;&gt;devenv.exe&lt;/code&gt;, and see if anything changes.&lt;/p&gt;
 
-&lt;video width=&quot;100%&quot; controls=&quot;&quot;&gt;&lt;source src=&quot;/myblog/assets/posts/subsystem-version-and-ws-thickframe/proof-2.mp4&quot; type=&quot;video/mp4&quot; /&gt;&lt;/video&gt;
+&lt;video controls=&quot;&quot;&gt;&lt;source src=&quot;/myblog/assets/posts/subsystem-version-and-ws-thickframe/proof-vs2015.mp4&quot; type=&quot;video/mp4&quot; /&gt;&lt;/video&gt;
 
-&lt;p&gt;See? With just a change of subsystem version, we can get back the good-old thin window border in Form Designer again.&lt;/p&gt;
+&lt;p&gt;See? With just a change of a byte, we can get back the good-old thin window border in Form Designer again.&lt;/p&gt;
+
+&lt;h3 id=&quot;your-window-theme-does-matter-too&quot;&gt;Your window theme does matter too&lt;/h3&gt;
+
+&lt;h4 id=&quot;for-win32-c&quot;&gt;For Win32 C++&lt;/h4&gt;
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;usingClassicTheme&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subsystem_ver&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;ASSERT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;client_size_will_change&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;v5.0:&lt;/p&gt;
+&lt;video controls=&quot;&quot;&gt;&lt;source src=&quot;/myblog/assets/posts/subsystem-version-and-ws-thickframe/test-v5.mp4&quot; type=&quot;video/mp4&quot; /&gt;&lt;/video&gt;
+&lt;p&gt;v6.0:&lt;/p&gt;
+&lt;video controls=&quot;&quot;&gt;&lt;source src=&quot;/myblog/assets/posts/subsystem-version-and-ws-thickframe/test-v6.mp4&quot; type=&quot;video/mp4&quot; /&gt;&lt;/video&gt;
+&lt;p&gt;&lt;a href=&quot;/myblog/assets/posts/subsystem-version-and-ws-thickframe/test-v5-v6.7z&quot;&gt;test-v5-v6.7z&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;for-winform&quot;&gt;For WinForm&lt;/h4&gt;
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;ASSERT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;client_size_never_change&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// but
+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subsystem_ver&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;c1&quot;&gt;// you can see something is off
+&lt;/span&gt;	&lt;span class=&quot;c1&quot;&gt;// because it is WinForm's workaround after all
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;v5.0:&lt;/p&gt;
+&lt;video controls=&quot;&quot;&gt;&lt;source src=&quot;/myblog/assets/posts/subsystem-version-and-ws-thickframe/winform-v5.mp4&quot; type=&quot;video/mp4&quot; /&gt;&lt;/video&gt;
+&lt;p&gt;&lt;br /&gt;
+v6.0:&lt;/p&gt;
+&lt;video controls=&quot;&quot;&gt;&lt;source src=&quot;/myblog/assets/posts/subsystem-version-and-ws-thickframe/winform-v6.mp4&quot; type=&quot;video/mp4&quot; /&gt;&lt;/video&gt;
+&lt;p&gt;&lt;a href=&quot;/myblog/assets/posts/subsystem-version-and-ws-thickframe/winform-v5-v6.7z&quot;&gt;winform-v5-v6.7z&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h3&gt;
 
-&lt;p&gt;&lt;strong&gt;When toggling &lt;code class=&quot;highlighter-rouge&quot;&gt;WS_THICKFRAME&lt;/code&gt;, if subsystem version of EXE is &amp;gt;= 6.0, the window will never resize, and vice versa.&lt;/strong&gt; I guess this is some kind of “compatibility trick” by Windows developer team, because back in earlier version of Windows, window will be resized too, just not that obvious. I would call it a failure though, because different version of Windows resizes the window differently. This “trick” only creates confusion in my opinion.&lt;/p&gt;</content><author><name></name></author><summary type="html">I always thought it was just an intended change made by the WinForm development team. I was wrong.</summary></entry><entry><title type="html">Enable Direct3D acceleration in Windows 2000 in VirtualBox</title><link href="http://localhost:4000/myblog/windows/undocd/2017/05/03/enable-direct3d-in-win2k-vbox.html" rel="alternate" type="text/html" title="Enable Direct3D acceleration in Windows 2000 in VirtualBox" /><published>2017-05-03T15:34:00+08:00</published><updated>2017-05-03T15:34:00+08:00</updated><id>http://localhost:4000/myblog/windows/undocd/2017/05/03/enable-direct3d-in-win2k-vbox</id><content type="html" xml:base="http://localhost:4000/myblog/windows/undocd/2017/05/03/enable-direct3d-in-win2k-vbox.html">&lt;p&gt;VBox version: v5.0.10.r104061&lt;/p&gt;
+&lt;p&gt;If you’re developing with WinForm, then good for you, you don’t actually have to do anything, because you can assume the client size never change by itself. That little oddity is not really a big matter. Who would toggle the window style every two seconds?&lt;/p&gt;
+
+&lt;p&gt;If you’re developing Win32 application, then you have to make up your mind. Set subsystem version to 6.0 is probably the most easy thing to do, but it is not consistent enough IMO because the size still changes if user is using Windows Classic theme. You might want to use the &lt;a href=&quot;#winform-workaround&quot;&gt;WinForm workaround I proposed&lt;/a&gt; up there. If you really want the ultimate consistency (like me), then you should never toggle the &lt;code class=&quot;highlighter-rouge&quot;&gt;WS_THICKFRAME&lt;/code&gt;. There are other ways to prevent the window from resizing, I will leave that to you.&lt;/p&gt;</content><author><name></name></author><summary type="html">I always thought it was just an intended change made by the WinForm development team. I was wrong.</summary></entry><entry><title type="html">Enable Direct3D acceleration in Windows 2000 in VirtualBox</title><link href="http://localhost:4000/myblog/windows/undocd/2017/05/03/enable-direct3d-in-win2k-vbox.html" rel="alternate" type="text/html" title="Enable Direct3D acceleration in Windows 2000 in VirtualBox" /><published>2017-05-03T15:34:00+08:00</published><updated>2017-05-03T15:34:00+08:00</updated><id>http://localhost:4000/myblog/windows/undocd/2017/05/03/enable-direct3d-in-win2k-vbox</id><content type="html" xml:base="http://localhost:4000/myblog/windows/undocd/2017/05/03/enable-direct3d-in-win2k-vbox.html">&lt;p&gt;VBox version: v5.0.10.r104061&lt;/p&gt;
 
 &lt;h2 id=&quot;part-1-obtaining-required-files&quot;&gt;Part 1: Obtaining required files&lt;/h2&gt;
 

@@ -177,6 +177,87 @@
 <p>信じられない？ See for yourself:<br />
 <a href="/myblog/assets/posts/msvc-support-utf-8-string-literal-since-vc6/utf8-string-literal-test-vc6-exe.7z">utf8-string-literal-test-vc6-exe.7z</a></p>
 
+<h3 id="update-file-encoding-plays-role-too">UPDATE: File encoding plays role too</h3>
+
+<p>You might think that as long as your system locale is English, which enable MSVC to compile UTF-8 source file, the string literal in your source file will always be UTF-8. This is NOT true. Here is the pseudocode that describes the MSVC behavior:</p>
+
+<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="k">if</span> <span class="p">(</span><span class="n">ansi_codepage</span> <span class="o">==</span> <span class="mi">1252</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">open_source_file_with_encoding</span><span class="p">(</span><span class="n">utf_8</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">else</span> <span class="p">{</span>
+    <span class="n">open_source_file_with_encoding</span><span class="p">(</span><span class="n">ansi_codepage</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="n">copy_string_literal_into_exe_with_encoding</span><span class="p">(</span><span class="n">file_encoding</span><span class="p">);</span>
+</code></pre>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>ANSI CP</th>
+      <th>Source file CP</th>
+      <th>String literal CP in EXE</th>
+      <th>Conversion flow</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1252</td>
+      <td>UTF-8</td>
+      <td>UTF-8</td>
+      <td>UTF-8 -&gt; wide -&gt; UTF-8</td>
+    </tr>
+    <tr>
+      <td>1252</td>
+      <td>932</td>
+      <td>932</td>
+      <td>UTF-8 -&gt; wide -&gt; 932</td>
+    </tr>
+    <tr>
+      <td>1252</td>
+      <td>936</td>
+      <td>936</td>
+      <td>UTF-8 -&gt; wide-&gt; 936</td>
+    </tr>
+    <tr>
+      <td>936</td>
+      <td>UTF-8</td>
+      <td>UTF-8</td>
+      <td>936 -&gt; wide -&gt; UTF8</td>
+    </tr>
+    <tr>
+      <td>936</td>
+      <td>932</td>
+      <td>932</td>
+      <td>936 -&gt; wide -&gt; 932</td>
+    </tr>
+    <tr>
+      <td>936</td>
+      <td>936</td>
+      <td>936</td>
+      <td>936 -&gt; wide -&gt; 936</td>
+    </tr>
+    <tr>
+      <td>932</td>
+      <td>UTF-8</td>
+      <td>UTF-8</td>
+      <td>932 -&gt; wide -&gt; UTF-8</td>
+    </tr>
+    <tr>
+      <td>932</td>
+      <td>932</td>
+      <td>932</td>
+      <td>932 -&gt; wide -&gt; 932</td>
+    </tr>
+    <tr>
+      <td>932</td>
+      <td>936</td>
+      <td>936</td>
+      <td>932 -&gt; wide -&gt; 936</td>
+    </tr>
+  </tbody>
+</table>
+
   </div>
 
   

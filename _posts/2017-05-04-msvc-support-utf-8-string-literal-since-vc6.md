@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Visual C++ supports UTF-8 string literal since VC6.0"
+title:  "Visual C++ supports UTF-8 string literal since VC6.0 (Updated)"
 date:   2017-05-04 21:00:00 +0800
 categories: msvc
 permalink:  msvc-support-utf8-string-literal-since-vc6
@@ -101,6 +101,8 @@ Let's see what would happen if we compile the source file with VC6.0 compiler.
 
 This is the issue I was talking about. To fix it, just append a space to the problematic string literal.
 
+**UPDATE May 11: [A better way has been discovered](#vc6-localeName).**
+
 ![img]({% asset_path vc6-fixed.png %})
 
 信じられない？ See for yourself:  
@@ -131,3 +133,40 @@ copy_string_literal_into_exe_with_encoding(file_encoding);
 | 932     	| UTF-8          	| UTF-8                    	| 932 -> wide -> UTF-8   	|
 | 932     	| 932            	| 932                      	| 932 -> wide -> 932     	|
 | 932     	| 936            	| 936                      	| 932 -> wide -> 936     	|
+
+<a name="vc6-localeName"></a>
+### UPDATE: For VC6.0, the key is LocaleName.
+
+Say no more, I am totally speechless now. As long as your `LocaleName` is valid and start with `en-`, it will compile without issue. I'm not sure why (racist?) but it works. See for yourself.
+
+![img]({% asset_path vc6-japan-locale-name.png %})
+
+![img]({% asset_path vc6-us-locale-name.png %})
+
+Good thing is, this change **does not require a reboot**, and you can automate it with batch file. I have wrapped as a function, so you can integrate it into your batch file easily. Note that you need to `setlocal enableDelayedExpansion`. Don't know where to put? Put it after your `@echo off`.
+
+```
+:localeName
+set _path_="HKCU\Control Panel\International"
+set _name_=LocaleName
+if "%~1"=="patch" (
+	call :localeName get _localeName_
+	call :localeName set en-US
+)
+if "%~1"=="unpatch" (
+	call :localeName set !_localeName_!
+)
+if "%~1"=="get" (
+	for /f "tokens=3 skip=2" %%i in ('reg query !_path_! /v !_name_!') do (
+		set _localeName_=%%i
+	)
+)
+if "%~1"=="set" (
+	reg add !_path_! /v !_name_! /d "%~2" /f >nul || exit/b 1
+)
+exit/b
+```
+
+Before compile script: `call :localeName patch`
+
+After compile script: `call :localeName unpatch`

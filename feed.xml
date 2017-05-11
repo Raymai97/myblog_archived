@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="https://raymai97.github.io/myblog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://raymai97.github.io/myblog/" rel="alternate" type="text/html" /><updated>2017-05-05T16:48:43+08:00</updated><id>https://raymai97.github.io/myblog/</id><title type="html">myblog</title><subtitle>A general blog sharing stuff about Windows, Visual Studio, Programming, Anime, Games and anything from my thought.
-</subtitle><entry><title type="html">Visual C++ supports UTF-8 string literal since VC6.0</title><link href="https://raymai97.github.io/myblog/msvc-support-utf8-string-literal-since-vc6" rel="alternate" type="text/html" title="Visual C++ supports UTF-8 string literal since VC6.0" /><published>2017-05-04T21:00:00+08:00</published><updated>2017-05-04T21:00:00+08:00</updated><id>https://raymai97.github.io/myblog/msvc-support-utf-8-string-literal-since-vc6</id><content type="html" xml:base="https://raymai97.github.io/myblog/msvc-support-utf8-string-literal-since-vc6">&lt;p&gt;If you’re here for Visual C++ 6.0, &lt;a href=&quot;#vc6&quot;&gt;click here&lt;/a&gt;.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="https://raymai97.github.io/myblog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://raymai97.github.io/myblog/" rel="alternate" type="text/html" /><updated>2017-05-11T12:45:41+08:00</updated><id>https://raymai97.github.io/myblog/</id><title type="html">myblog</title><subtitle>A general blog sharing stuff about Windows, Visual Studio, Programming, Anime, Games and anything from my thought.
+</subtitle><entry><title type="html">Visual C++ supports UTF-8 string literal since VC6.0 (Updated)</title><link href="https://raymai97.github.io/myblog/msvc-support-utf8-string-literal-since-vc6" rel="alternate" type="text/html" title="Visual C++ supports UTF-8 string literal since VC6.0 (Updated)" /><published>2017-05-04T21:00:00+08:00</published><updated>2017-05-04T21:00:00+08:00</updated><id>https://raymai97.github.io/myblog/msvc-support-utf-8-string-literal-since-vc6</id><content type="html" xml:base="https://raymai97.github.io/myblog/msvc-support-utf8-string-literal-since-vc6">&lt;p&gt;If you’re here for Visual C++ 6.0, &lt;a href=&quot;#vc6&quot;&gt;click here&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;I’m not sure about Visual C++ 7.0 and 7.1 (.NET 2002 and 2003), but since 8.0 (2005), Visual C++ compiler already supports  source file with UTF-8 no BOM encoding. It is just that, for it to work as expected, you need to follow a rule that no one in Microsoft will ever tell you. Now we are in 2017 and I have failed to find any thread or article that emphasizes it, that’s why I think I need to write this.&lt;/p&gt;
 
@@ -94,6 +94,8 @@
 
 &lt;p&gt;This is the issue I was talking about. To fix it, just append a space to the problematic string literal.&lt;/p&gt;
 
+&lt;p&gt;&lt;strong&gt;UPDATE May 11: &lt;a href=&quot;#vc6-localeName&quot;&gt;A better way has been discovered&lt;/a&gt;.&lt;/strong&gt;&lt;/p&gt;
+
 &lt;p&gt;&lt;img src=&quot;/myblog/assets/posts/msvc-support-utf-8-string-literal-since-vc6/vc6-fixed.png&quot; alt=&quot;img&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;信じられない？ See for yourself:&lt;br /&gt;
@@ -178,7 +180,44 @@
       &lt;td&gt;932 -&amp;gt; wide -&amp;gt; 936&lt;/td&gt;
     &lt;/tr&gt;
   &lt;/tbody&gt;
-&lt;/table&gt;</content><author><name></name></author><summary type="html">If you’re here for Visual C++ 6.0, click here.</summary></entry><entry><title type="html">Subsystem version and WS_THICKFRAME are related somehow</title><link href="https://raymai97.github.io/myblog/subsystem-version-and-ws-thickframe" rel="alternate" type="text/html" title="Subsystem version and WS_THICKFRAME are related somehow" /><published>2017-05-03T23:00:00+08:00</published><updated>2017-05-03T23:00:00+08:00</updated><id>https://raymai97.github.io/myblog/subsystem-version-and-ws-thickframe</id><content type="html" xml:base="https://raymai97.github.io/myblog/subsystem-version-and-ws-thickframe">&lt;blockquote&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;a name=&quot;vc6-localeName&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&quot;update-for-vc60-the-key-is-localename&quot;&gt;UPDATE: For VC6.0, the key is LocaleName.&lt;/h3&gt;
+
+&lt;p&gt;Say no more, I am totally speechless now. As long as your &lt;code class=&quot;highlighter-rouge&quot;&gt;LocaleName&lt;/code&gt; is valid and start with &lt;code class=&quot;highlighter-rouge&quot;&gt;en-&lt;/code&gt;, it will compile without issue. I’m not sure why (racist?) but it works. See for yourself.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/myblog/assets/posts/msvc-support-utf-8-string-literal-since-vc6/vc6-japan-locale-name.png&quot; alt=&quot;img&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/myblog/assets/posts/msvc-support-utf-8-string-literal-since-vc6/vc6-us-locale-name.png&quot; alt=&quot;img&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Good thing is, this change &lt;strong&gt;does not require a reboot&lt;/strong&gt;, and you can automate it with batch file. I have wrapped as a function, so you can integrate it into your batch file easily. Note that you need to &lt;code class=&quot;highlighter-rouge&quot;&gt;setlocal enableDelayedExpansion&lt;/code&gt;. Don’t know where to put? Put it after your &lt;code class=&quot;highlighter-rouge&quot;&gt;@echo off&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;:localeName
+set _path_=&quot;HKCU\Control Panel\International&quot;
+set _name_=LocaleName
+if &quot;%~1&quot;==&quot;patch&quot; (
+	call :localeName get _localeName_
+	call :localeName set en-US
+)
+if &quot;%~1&quot;==&quot;unpatch&quot; (
+	call :localeName set !_localeName_!
+)
+if &quot;%~1&quot;==&quot;get&quot; (
+	for /f &quot;tokens=3 skip=2&quot; %%i in ('reg query !_path_! /v !_name_!') do (
+		set _localeName_=%%i
+	)
+)
+if &quot;%~1&quot;==&quot;set&quot; (
+	reg add !_path_! /v !_name_! /d &quot;%~2&quot; /f &amp;gt;nul || exit/b 1
+)
+exit/b
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Before compile script: &lt;code class=&quot;highlighter-rouge&quot;&gt;call :localeName patch&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;After compile script: &lt;code class=&quot;highlighter-rouge&quot;&gt;call :localeName unpatch&lt;/code&gt;&lt;/p&gt;</content><author><name></name></author><summary type="html">If you’re here for Visual C++ 6.0, click here.</summary></entry><entry><title type="html">Subsystem version and WS_THICKFRAME are related somehow</title><link href="https://raymai97.github.io/myblog/subsystem-version-and-ws-thickframe" rel="alternate" type="text/html" title="Subsystem version and WS_THICKFRAME are related somehow" /><published>2017-05-03T23:00:00+08:00</published><updated>2017-05-03T23:00:00+08:00</updated><id>https://raymai97.github.io/myblog/subsystem-version-and-ws-thickframe</id><content type="html" xml:base="https://raymai97.github.io/myblog/subsystem-version-and-ws-thickframe">&lt;blockquote&gt;
   &lt;p&gt;I always thought it was just an intended change made by the WinForm development team. I was wrong.&lt;/p&gt;
 &lt;/blockquote&gt;
 

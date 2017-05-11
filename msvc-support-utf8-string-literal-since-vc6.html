@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Visual C++ supports UTF-8 string literal since VC6.0</title>
+  <title>Visual C++ supports UTF-8 string literal since VC6.0 (Updated)</title>
   <meta name="description" content="If you’re here for Visual C++ 6.0, click here.">
 
   <link rel="stylesheet" href="/myblog/assets/main.css">
@@ -16,8 +16,8 @@
   
   
   <!-- Begin Jekyll SEO tag v2.2.2 -->
-<title>Visual C++ supports UTF-8 string literal since VC6.0 | myblog</title>
-<meta property="og:title" content="Visual C++ supports UTF-8 string literal since VC6.0" />
+<title>Visual C++ supports UTF-8 string literal since VC6.0 (Updated) | myblog</title>
+<meta property="og:title" content="Visual C++ supports UTF-8 string literal since VC6.0 (Updated)" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="If you’re here for Visual C++ 6.0, click here." />
 <meta property="og:description" content="If you’re here for Visual C++ 6.0, click here." />
@@ -27,7 +27,7 @@
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2017-05-04T21:00:00+08:00" />
 <script type="application/ld+json">
-{"@context":"http://schema.org","@type":"BlogPosting","headline":"Visual C++ supports UTF-8 string literal since VC6.0","datePublished":"2017-05-04T21:00:00+08:00","dateModified":"2017-05-04T21:00:00+08:00","description":"If you’re here for Visual C++ 6.0, click here.","mainEntityOfPage":{"@type":"WebPage","@id":"https://raymai97.github.io/myblog/msvc-support-utf8-string-literal-since-vc6"},"url":"https://raymai97.github.io/myblog/msvc-support-utf8-string-literal-since-vc6"}</script>
+{"@context":"http://schema.org","@type":"BlogPosting","headline":"Visual C++ supports UTF-8 string literal since VC6.0 (Updated)","datePublished":"2017-05-04T21:00:00+08:00","dateModified":"2017-05-04T21:00:00+08:00","description":"If you’re here for Visual C++ 6.0, click here.","mainEntityOfPage":{"@type":"WebPage","@id":"https://raymai97.github.io/myblog/msvc-support-utf8-string-literal-since-vc6"},"url":"https://raymai97.github.io/myblog/msvc-support-utf8-string-literal-since-vc6"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -83,7 +83,7 @@
         <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
-    <h1 class="post-title" itemprop="name headline">Visual C++ supports UTF-8 string literal since VC6.0</h1>
+    <h1 class="post-title" itemprop="name headline">Visual C++ supports UTF-8 string literal since VC6.0 (Updated)</h1>
     <p class="post-meta">
       <time datetime="2017-05-04T21:00:00+08:00" itemprop="datePublished">
         
@@ -188,6 +188,8 @@
 
 <p>This is the issue I was talking about. To fix it, just append a space to the problematic string literal.</p>
 
+<p><strong>UPDATE May 11: <a href="#vc6-localeName">A better way has been discovered</a>.</strong></p>
+
 <p><img src="/myblog/assets/posts/msvc-support-utf-8-string-literal-since-vc6/vc6-fixed.png" alt="img" /></p>
 
 <p>信じられない？ See for yourself:<br />
@@ -273,6 +275,43 @@
     </tr>
   </tbody>
 </table>
+
+<p><a name="vc6-localeName"></a></p>
+<h3 id="update-for-vc60-the-key-is-localename">UPDATE: For VC6.0, the key is LocaleName.</h3>
+
+<p>Say no more, I am totally speechless now. As long as your <code class="highlighter-rouge">LocaleName</code> is valid and start with <code class="highlighter-rouge">en-</code>, it will compile without issue. I’m not sure why (racist?) but it works. See for yourself.</p>
+
+<p><img src="/myblog/assets/posts/msvc-support-utf-8-string-literal-since-vc6/vc6-japan-locale-name.png" alt="img" /></p>
+
+<p><img src="/myblog/assets/posts/msvc-support-utf-8-string-literal-since-vc6/vc6-us-locale-name.png" alt="img" /></p>
+
+<p>Good thing is, this change <strong>does not require a reboot</strong>, and you can automate it with batch file. I have wrapped as a function, so you can integrate it into your batch file easily. Note that you need to <code class="highlighter-rouge">setlocal enableDelayedExpansion</code>. Don’t know where to put? Put it after your <code class="highlighter-rouge">@echo off</code>.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>:localeName
+set _path_="HKCU\Control Panel\International"
+set _name_=LocaleName
+if "%~1"=="patch" (
+	call :localeName get _localeName_
+	call :localeName set en-US
+)
+if "%~1"=="unpatch" (
+	call :localeName set !_localeName_!
+)
+if "%~1"=="get" (
+	for /f "tokens=3 skip=2" %%i in ('reg query !_path_! /v !_name_!') do (
+		set _localeName_=%%i
+	)
+)
+if "%~1"=="set" (
+	reg add !_path_! /v !_name_! /d "%~2" /f &gt;nul || exit/b 1
+)
+exit/b
+</code></pre>
+</div>
+
+<p>Before compile script: <code class="highlighter-rouge">call :localeName patch</code></p>
+
+<p>After compile script: <code class="highlighter-rouge">call :localeName unpatch</code></p>
 
   </div>
 
